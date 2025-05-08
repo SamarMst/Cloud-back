@@ -39,7 +39,7 @@ sudo mkdir -p /home/ec2-user/app
 cd /home/ec2-user/app
 
 # Clone your application (replace with your actual repository URL)
-sudo git clone https://github.com/SamarMst/Cloud-back .
+sudo git clone https://github.com/SamarMst/Cloud-back.git .
 
 
 # Install application dependencies
