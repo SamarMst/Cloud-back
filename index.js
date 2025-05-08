@@ -7,6 +7,8 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+const AWS = require('aws-sdk');
+
 
 // Middleware
 app.use(cors());
@@ -14,7 +16,7 @@ app.use(express.json());
 
 // Database connection
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || 'cloud.c30aa8weqfzz.us-east-1.rds.amazonaws.com',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'IngegneriaAI3338090217',
   database: process.env.DB_NAME || 'cloud'
@@ -88,10 +90,6 @@ app.get('/server-info', async (req, res) => {
     console.error('Error fetching server info:', error);
     res.status(500).json({ error: 'Failed to get server information' });
   }
-});
-
-app.get('/', (req, res) => {
-  res.status(200).json('Hello from Backend app!');
 });
 
 app.get('/', (req, res) => {
@@ -191,9 +189,10 @@ app.delete('/api/users/:id', (req, res) => {
 });
 
 // Start server
-const server = app.listen(port, () => {
-  console.log(`http://localhost:${port}`);
+const server = app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${port}`);
 });
+
 
 // Handle graceful shutdown
 process.on('SIGTERM', () => {
