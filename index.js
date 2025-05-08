@@ -14,11 +14,12 @@ app.use(express.json());
 
 // Database connection
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'databasetest.cysrpetj7pax.us-east-1.rds.amazonaws.com',
-  user: process.env.DB_USER || 'admin',
-  password: process.env.DB_PASSWORD || 'alaadmin',
-  database: process.env.DB_NAME || 'databasetest'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'IngegneriaAI3338090217',
+  database: process.env.DB_NAME || 'cloud'
 });
+
 
 db.connect((err) => {
   if (err) {
@@ -191,7 +192,7 @@ app.delete('/api/users/:id', (req, res) => {
 
 // Start server
 const server = app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`http://localhost:${port}`);
 });
 
 // Handle graceful shutdown
