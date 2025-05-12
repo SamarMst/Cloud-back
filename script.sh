@@ -52,8 +52,7 @@ sudo npm install -g pm2
 pm2 start index.js
 
 # Set PM2 to start on system boot
-pm2 startup systemd -u ec2-user --hp /home/ec2-user
-sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ec2-user --hp /home/ec2-user
+eval "$(pm2 startup | tail -1)"
 pm2 save
 
 # Set appropriate permissions
