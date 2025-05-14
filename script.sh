@@ -4,21 +4,19 @@
 sudo yum update -y
 
 # Install Node.js
-sudo curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
-yum install -y nodejs
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+sudo yum install -y nodejs gcc-c++ make git nginx
 
-# Install dev tools (needed for some npm packages)
-sudo yum install -y gcc-c++ make git
+# Start and enable Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
-# Install Nginx
-sudo yum install -y nginx
-
-# Configure Nginx to proxy to your Node.js application
-sudo cat > /etc/nginx/conf.d/app.conf << 'EOF'
+# Configure Nginx
+cat << 'EOF' | sudo tee /etc/nginx/conf.d/app.conf
 server {
     listen 80;
     server_name _;
-    
+
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -30,33 +28,39 @@ server {
 }
 EOF
 
-# Start and enable Nginx
-sudo systemctl start nginx
-sudo systemctl enable nginx
+# Reload Nginx to apply config
+sudo systemctl reload nginx
 
 # Create app directory
-sudo mkdir -p /home/ec2-user/app
+APP_DIR="/home/ec2-user/app"
+mkdir -p $APP_DIR
+cd $APP_DIR
+
+# Clone your app (replace with real URL)
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git .
+
+# Change ownership to ec2-user
+sudo chown -R ec2-user:ec2-user $APP_DIR
+
+# Switch to ec2-user context to finish setup
+sudo -u ec2-user bash << 'EOF'
+
 cd /home/ec2-user/app
 
-# Clone your application (replace with your actual repository URL)
-sudo git clone https://github.com/SamarMst/Cloud-back.git .
+# Install dependencies
+npm install
 
+# Install PM2
+npm install -g pm2
 
-# Install application dependencies
-sudo npm install
+# Start app with PM2 and assign name
+pm2 start index.js --name backend
 
-# Install PM2 globally
-sudo npm install -g pm2
-
-# Start your application with PM2
-pm2 start index.js
-
-# Set PM2 to start on system boot
-eval "$(pm2 startup | tail -1)"
+# Setup PM2 to start on reboot
+pm2 startup systemd -u ec2-user --hp /home/ec2-user
 pm2 save
 
-# Set appropriate permissions
-chown -R ec2-user:ec2-user /home/ec2-user/app
+EOF
 
-# Log the completion
-echo "Application setup completed" > /home/ec2-user/setup-completed.log
+# Log setup completion
+echo "Setup completed successfully" | sudo tee /home/ec2-user/setup-completed.log
