@@ -37,7 +37,7 @@ mkdir -p $APP_DIR
 cd $APP_DIR
 
 # Clone your app (replace with real URL)
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git .
+git clone https://github.com/SamarMst/Cloud-back.git .
 
 # Change ownership to ec2-user
 sudo chown -R ec2-user:ec2-user $APP_DIR
